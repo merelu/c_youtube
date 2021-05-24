@@ -24,10 +24,10 @@ body {
 
 .app {
   display: flex;
+  top: 0;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: 100vh;
 }
 
 input.error {
