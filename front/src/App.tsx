@@ -5,6 +5,7 @@ import LoginPage from "@pages/LoginPage";
 import RegisterPage from "@pages/RegisterPage";
 import Auth from "@hoc/Auth";
 import NavBar from "@components/NavBar";
+import VideoUploadPage from "@pages/VideoUploadPage";
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
           <Route path="/" exact component={Auth(LandingPage, null)} />
           <Route path="/login" component={Auth(LoginPage, false)} />
           <Route path="/register" component={Auth(RegisterPage, false)} />
+          <Route path="/video/upload" component={Auth(VideoUploadPage, true)} />
         </Switch>
       </div>
     </Suspense>
