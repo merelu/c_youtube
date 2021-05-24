@@ -21,7 +21,8 @@ app.use(cookieParser());
 
 app.use("/api/users", userRouter);
 app.use("/api/video", videoRouter);
-app.use("/uploads", express.static("uploads"));
+
+app.use("/back/uploads", express.static("back/uploads"));
 
 if (process.env.NODE_ENV === "production") {
   app.use(express.static("client/build"));
