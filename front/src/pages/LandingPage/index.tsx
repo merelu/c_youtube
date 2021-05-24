@@ -3,11 +3,7 @@ import { useAppDispatch, useAppSelector } from "@store/hooks";
 import { logOutUser } from "@_actions/user_action";
 
 function LandingPage() {
-  const dispatch = useAppDispatch();
   const { userData } = useAppSelector((state) => state.user);
-  const logoutHandler = useCallback(() => {
-    dispatch(logOutUser());
-  }, [dispatch]);
   return (
     <div
       style={{
