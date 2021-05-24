@@ -5,6 +5,7 @@
   "license": "MIT",
   "scripts": {
     "start": "nodemon back/index.js",
+    "front": "cd front && yarn start",
     "dev": "concurrently \"yarn start back\" \"cd front && yarn start \""
   },
   "dependencies": {
