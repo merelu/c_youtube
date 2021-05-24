@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import { Button, Form, Input, Select, Typography } from "antd";
 import Dropzone from "react-dropzone";
 import { DropzoneContainer, DropzoneInner } from "./styles";
@@ -23,6 +23,8 @@ const categoryOption = [
 ];
 
 const validationSchema = Yup.object().shape({
+  videoUrl: Yup.string().required("Video is required"),
+  thumbnailUrl: Yup.string().required("Thumbnail is required"),
   title: Yup.string().required("Title is required"),
   description: Yup.string().required("Description is required"),
   privacy: Yup.number().default(0),
@@ -30,6 +32,7 @@ const validationSchema = Yup.object().shape({
 });
 
 function VideoUploadPage() {
+  const [thumbnailPath, setThumbnailPath] = useState("");
   const onDrop = useCallback((files) => {
     let formData = new FormData();
     const config = {
@@ -39,14 +42,34 @@ function VideoUploadPage() {
     axios.post("/api/video/uploadfiles", formData, config).then((response) => {
       if (response.data.success) {
         console.log(response.data);
+        let body = {
+          url: response.data.url,
+          fileName: response.data.fileName,
+        };
+        axios.post("/api/video/thumbnail", body).then((response) => {
+          if (response.data.success) {
+            console.log(response.data);
+            setThumbnailPath(response.data.url[0]);
+          } else {
+            alert("썸네일 생성을 실패했습니다.");
+          }
+        });
       } else {
         alert("비디오 업로드를 실패했습니다.");
       }
     });
   }, []);
+
   return (
     <Formik
-      initialValues={{ title: "", description: "", privacy: 0, category: 0 }}
+      initialValues={{
+        videoUrl: "",
+        thumbnailUrl: "",
+        title: "",
+        description: "",
+        privacy: 0,
+        category: 0,
+      }}
       validationSchema={validationSchema}
       onSubmit={(values, { setSubmitting }) => {}}
     >
@@ -66,6 +89,7 @@ function VideoUploadPage() {
         return (
           <>
             <Title level={2}>Upload Video</Title>
+            <br />
             <Form onFinish={handleSubmit}>
               <DropzoneContainer>
                 {/* drop zone */}
@@ -85,8 +109,13 @@ function VideoUploadPage() {
                 </Form.Item>
                 {/* thumbnail */}
                 <Form.Item required>
-                  <div style={{ width: "300px" }}>
-                    <img src="" alt="" />
+                  <div style={{ width: "320px" }}>
+                    {thumbnailPath && (
+                      <img
+                        src={`http://localhost:5000/${thumbnailPath}`}
+                        alt=""
+                      />
+                    )}
                   </div>
                 </Form.Item>
               </DropzoneContainer>
