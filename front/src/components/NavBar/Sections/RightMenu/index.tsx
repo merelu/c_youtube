@@ -36,6 +36,9 @@ function RightMenu({ mode }: IRightMenu) {
   } else {
     return (
       <Menu mode={mode}>
+        <Menu.Item key="upload">
+          <Link to="/video/upload">Upload</Link>
+        </Menu.Item>
         <Menu.Item key="logout">
           <Link to="#" onClick={logoutHandler}>
             Logout
