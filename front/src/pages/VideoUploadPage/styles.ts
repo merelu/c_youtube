@@ -1,10 +1,5 @@
 import styled from "@emotion/styled";
 
-export const VideoUploadFormContainer = styled.div`
-  max-width: 700px;
-  margin: 2rem auto;
-`;
-
 export const TitleWrap = styled.div`
   text-align: center;
   margin-bottom: 2rem;
