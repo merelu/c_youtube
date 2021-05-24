@@ -11,13 +11,18 @@ function App() {
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <NavBar />
-      <div>
-        <Switch>
-          <Route path="/" exact component={Auth(LandingPage, null)} />
-          <Route path="/login" component={Auth(LoginPage, false)} />
-          <Route path="/register" component={Auth(RegisterPage, false)} />
-          <Route path="/video/upload" component={Auth(VideoUploadPage, true)} />
-        </Switch>
+      <div style={{ paddingTop: "60px", minHeight: "calc(100vh - 80px)" }}>
+        <div className="app">
+          <Switch>
+            <Route path="/" exact component={Auth(LandingPage, null)} />
+            <Route path="/login" component={Auth(LoginPage, false)} />
+            <Route path="/register" component={Auth(RegisterPage, false)} />
+            <Route
+              path="/video/upload"
+              component={Auth(VideoUploadPage, true)}
+            />
+          </Switch>
+        </div>
       </div>
     </Suspense>
   );

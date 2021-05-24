@@ -2,10 +2,11 @@ import styled from "@emotion/styled";
 import { Button, Drawer } from "antd";
 
 export const Nav = styled.nav`
-  position: fixed;
+  position: sticky;
   display: flex;
   width: 100%;
   height: 60px;
+  top: 0;
   padding: 0 20px;
   border-bottom: solid 1px #e8e8e8;
   overflow: hidden;

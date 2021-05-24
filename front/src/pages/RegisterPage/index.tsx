@@ -91,7 +91,7 @@ function RegisterPage() {
           handleSubmit,
         } = props;
         return (
-          <div className="app">
+          <>
             <Title level={2}>Sign up</Title>
             <Form
               onFinish={handleSubmit}
@@ -186,7 +186,7 @@ function RegisterPage() {
                 </Button>
               </Form.Item>
             </Form>
-          </div>
+          </>
         );
       }}
     </Formik>
