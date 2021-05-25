@@ -1,5 +1,5 @@
 const express = require("express");
-// const { Video } = require("../models/Video");
+const { Video } = require("../models/Video");
 const multer = require("multer");
 const fs = require("fs");
 const ffmpeg = require("fluent-ffmpeg");
@@ -92,6 +92,15 @@ router.post("/thumbnail", (req, res) => {
       //'%b' : input basename (filename w/o extension)
       filename: "thumbnail-%b.png",
     });
+});
+
+router.post("/uploadVideo", (req, res) => {
+  const video = new Video(req.body);
+
+  video.save((err, doc) => {
+    if (err) return res.json({ success: false, err });
+    res.status(200).json({ success: true });
+  });
 });
 
 module.exports = router;
