@@ -1,11 +1,13 @@
 import React, { useCallback, useState } from "react";
-import { Button, Form, Input, Select, Typography } from "antd";
-import Dropzone from "react-dropzone";
+import { Button, Form, Input, message, Select, Typography } from "antd";
+import Dropzone, { useDropzone } from "react-dropzone";
 import { DropzoneContainer, DropzoneInner } from "./styles";
 import { PlusOutlined } from "@ant-design/icons";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
+import { useAppDispatch, useAppSelector } from "@store/hooks";
+import { push } from "connected-react-router";
 
 const { Title } = Typography;
 const { TextArea } = Input;
@@ -13,65 +15,63 @@ const { Option } = Select;
 
 const privacyOption = [
   { value: 0, label: "public" },
-  { value: 1, label: "private" },
+  { value: 0, label: "private" },
 ];
 const categoryOption = [
   { value: 0, label: "Film & Animation" },
-  { value: 1, label: "Autos & Vehicles" },
-  { value: 2, label: "Music" },
-  { value: 3, label: "Pets & Animals" },
+  { value: 0, label: "Autos & Vehicles" },
+  { value: 0, label: "Music" },
+  { value: 0, label: "Pets & Animals" },
 ];
 
 const validationSchema = Yup.object().shape({
-  videoUrl: Yup.string().required("Video is required"),
-  thumbnailUrl: Yup.string().required("Thumbnail is required"),
-  title: Yup.string().required("Title is required"),
+  title: Yup.string().max(50).required("Title is required"),
   description: Yup.string().required("Description is required"),
-  privacy: Yup.number().default(0),
-  category: Yup.number().default(0),
+  privacy: Yup.string(),
+  category: Yup.string(),
+  duration: Yup.string().required("Duration is required"),
+  filePath: Yup.string().required("Video is required"),
+  thumbnail: Yup.string().required("Thumbnail is required"),
 });
 
 function VideoUploadPage() {
-  const [thumbnailPath, setThumbnailPath] = useState("");
-  const onDrop = useCallback((files) => {
-    let formData = new FormData();
-    const config = {
-      headers: { "content-type": "multipart/form-data" },
-    };
-    formData.append("file", files[0]);
-    axios.post("/api/video/uploadfiles", formData, config).then((response) => {
-      if (response.data.success) {
-        console.log(response.data);
-        let body = {
-          url: response.data.url,
-          fileName: response.data.fileName,
-        };
-        axios.post("/api/video/thumbnail", body).then((response) => {
-          if (response.data.success) {
-            console.log(response.data);
-            setThumbnailPath(response.data.url[0]);
-          } else {
-            alert("썸네일 생성을 실패했습니다.");
-          }
-        });
-      } else {
-        alert("비디오 업로드를 실패했습니다.");
-      }
-    });
-  }, []);
+  const dispatch = useAppDispatch();
+  const user = useAppSelector((state) => state.user);
 
   return (
     <Formik
       initialValues={{
-        videoUrl: "",
-        thumbnailUrl: "",
         title: "",
         description: "",
-        privacy: 0,
-        category: 0,
+        privacy: "",
+        category: categoryOption[0].label,
+        filePath: "",
+        thumbnail: "",
+        duration: "",
       }}
       validationSchema={validationSchema}
-      onSubmit={(values, { setSubmitting }) => {}}
+      onSubmit={(values, { setSubmitting }) => {
+        let body = {
+          title: values.title,
+          description: values.description,
+          privacy: values.privacy === "public" ? 0 : 1,
+          category: values.category,
+          writer: user.userData._id,
+          filePath: values.filePath,
+          thumbnail: values.thumbnail,
+          duration: values.duration,
+        };
+        console.log(body);
+        axios.post("/api/video/uploadVideo", body).then((response) => {
+          if (response.data.success) {
+            message.success("성공적으로 업로드를 했습니다.");
+            dispatch(push("/"));
+          } else {
+            alert("비디오 업로드를 실패했습니다.");
+          }
+        });
+        setSubmitting(false);
+      }}
     >
       {(props) => {
         const {
@@ -84,12 +84,45 @@ function VideoUploadPage() {
           handleBlur,
           handleSubmit,
           handleReset,
+          setFieldValue,
         } = props;
 
+        const onDrop = (files: any) => {
+          let formData = new FormData();
+          const config = {
+            headers: { "content-type": "multipart/form-data" },
+          };
+          formData.append("file", files[0]);
+          axios
+            .post("/api/video/uploadfiles", formData, config)
+            .then((response) => {
+              if (response.data.success) {
+                setFieldValue("filePath", response.data.url, true);
+                console.log(values.filePath);
+                let body = {
+                  url: response.data.url,
+                  fileName: response.data.fileName,
+                };
+                axios.post("/api/video/thumbnail", body).then((response) => {
+                  if (response.data.success) {
+                    setFieldValue("thumbnail", response.data.url[0], true);
+                    setFieldValue("duration", response.data.fileDuration, true);
+                  } else {
+                    alert("썸네일 생성을 실패했습니다.");
+                  }
+                });
+              } else {
+                alert("비디오 업로드를 실패했습니다.");
+              }
+            });
+        };
         return (
           <>
             <Title level={2}>Upload Video</Title>
             <br />
+
+            {/* thumbnail */}
+
             <Form onFinish={handleSubmit}>
               <DropzoneContainer>
                 {/* drop zone */}
@@ -101,25 +134,27 @@ function VideoUploadPage() {
                   >
                     {({ getRootProps, getInputProps }) => (
                       <DropzoneInner {...getRootProps()}>
-                        <input {...getInputProps()} />
+                        <input {...getInputProps()} name="filePath" />
                         <PlusOutlined style={{ fontSize: "3rem" }} />
                       </DropzoneInner>
                     )}
                   </Dropzone>
                 </Form.Item>
-                {/* thumbnail */}
-                <Form.Item required>
-                  <div style={{ width: "320px" }}>
-                    {thumbnailPath && (
-                      <img
-                        src={`http://localhost:5000/${thumbnailPath}`}
-                        alt=""
-                      />
-                    )}
-                  </div>
-                </Form.Item>
+                <div style={{ width: "320px" }}>
+                  {values.thumbnail !== "" && (
+                    <img
+                      src={`http://localhost:5000/${values.thumbnail}`}
+                      alt={values.thumbnail}
+                    />
+                  )}
+                </div>
               </DropzoneContainer>
-
+              {errors.filePath && touched.filePath && (
+                <div className="input-feedback">{errors.filePath}</div>
+              )}
+              {errors.thumbnail && touched.thumbnail && (
+                <div className="input-feedback">{errors.thumbnail}</div>
+              )}
               <Form.Item required>
                 <label>Title</label>
                 <Input
@@ -159,9 +194,13 @@ function VideoUploadPage() {
               </Form.Item>
               <Form.Item required>
                 <label>Privacy</label>
-                <Select defaultValue={0}>
+                <Select
+                  value={values.privacy}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                >
                   {privacyOption.map((item, index) => (
-                    <Option key={index} value={item.value}>
+                    <Option key={index} value={item.label}>
                       {item.label}
                     </Option>
                   ))}
@@ -169,9 +208,13 @@ function VideoUploadPage() {
               </Form.Item>
               <Form.Item required>
                 <label>Category</label>
-                <Select defaultValue={0}>
+                <Select
+                  value={values.category}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                >
                   {categoryOption.map((item, index) => (
-                    <Option key={index} value={item.value}>
+                    <Option key={index} value={item.label}>
                       {item.label}
                     </Option>
                   ))}
