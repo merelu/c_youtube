@@ -77,7 +77,7 @@ function LoginPage() {
           handleReset,
         } = props;
         return (
-          <>
+          <div className="formPage">
             <Title level={2}>Log In</Title>
             <Form onFinish={handleSubmit} style={{ width: "350px" }}>
               <Form.Item required>
@@ -159,7 +159,7 @@ function LoginPage() {
                 Or <Link to="/register">register now!</Link>
               </Form.Item>
             </Form>
-          </>
+          </div>
         );
       }}
     </Formik>
