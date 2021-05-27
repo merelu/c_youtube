@@ -43,7 +43,7 @@ function VideoUploadPage() {
       initialValues={{
         title: "",
         description: "",
-        privacy: "",
+        privacy: privacyOption[0].label,
         category: categoryOption[0].label,
         filePath: "",
         thumbnail: "",
@@ -117,7 +117,7 @@ function VideoUploadPage() {
             });
         };
         return (
-          <>
+          <div className="formPage">
             <Title level={2}>Upload Video</Title>
             <br />
 
@@ -232,7 +232,7 @@ function VideoUploadPage() {
                 </Button>
               </Form.Item>
             </Form>
-          </>
+          </div>
         );
       }}
     </Formik>
