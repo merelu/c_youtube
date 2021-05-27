@@ -22,7 +22,7 @@ body {
   background-color: #fff;
 }
 
-.app {
+.formPage {
   display: flex;
   top: 0;
   flex-direction: column;
