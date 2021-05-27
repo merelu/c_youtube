@@ -103,4 +103,23 @@ router.post("/uploadVideo", (req, res) => {
   });
 });
 
+router.get("/getVideos", (req, res) => {
+  //비디오를 DB에서 가져와서 클라이언트에 보낸다.
+  //populate을 하지 않으면 writer의 id만 가져옴
+  Video.find()
+    .populate("writer", "isAuth isAdmin name email lastname role image")
+    .exec((err, videos) => {
+      if (err) return res.status(400).send(err);
+      res.status(200).json({ success: true, videos });
+    });
+});
+
+router.get("/getVideoDetail/:videoId", (req, res) => {
+  Video.findOne({ _id: req.params.videoId })
+    .populate("writer", "isAuth isAdmin name email lastname role image")
+    .exec((err, videoDetail) => {
+      if (err) return res.status(400).send(err);
+      res.status(200).json({ success: true, videoDetail });
+    });
+});
 module.exports = router;
