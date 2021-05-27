@@ -8,3 +8,18 @@ export interface IUser {
   role?: boolean;
   image?: string;
 }
+
+export interface IVideo {
+  category: string;
+  createdAt: string;
+  description: string;
+  duration: string;
+  filePath: string;
+  privacy: number;
+  thumbnail: string;
+  title: string;
+  updatedAt: string;
+  views: number;
+  writer: IUser;
+  _id: string;
+}
