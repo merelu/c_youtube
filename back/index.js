@@ -4,6 +4,7 @@ const cookieParser = require("cookie-parser");
 const config = require("./config/key");
 const userRouter = require("./routes/user");
 const videoRouter = require("./routes/video");
+const subscribeRouter = require("./routes/subscribe");
 const app = express();
 mongoose
   .connect(config.mongoURI, {
@@ -21,7 +22,7 @@ app.use(cookieParser());
 
 app.use("/api/users", userRouter);
 app.use("/api/video", videoRouter);
-
+app.use("/api/subscribe", subscribeRouter);
 app.use("/back/uploads", express.static("back/uploads"));
 
 if (process.env.NODE_ENV === "production") {
