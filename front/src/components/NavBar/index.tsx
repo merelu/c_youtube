@@ -25,7 +25,7 @@ function NavBar() {
   return (
     <Nav>
       <MenuLogo>
-        <Link to="/">Logo</Link>
+        <Link to="/">CTube</Link>
       </MenuLogo>
       <MenuContainer>
         <div className="menu_left">
