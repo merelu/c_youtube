@@ -5,6 +5,7 @@ import axios from "axios";
 import { useParams } from "react-router";
 import { IVideo } from "@typings/db";
 import SideVideo from "@components/SideVideo";
+import Subscribe from "@components/Subscribe";
 
 function VideoDetailPage() {
   const { videoId } = useParams<{ videoId: string }>();
@@ -20,32 +21,39 @@ function VideoDetailPage() {
       }
     });
   }, [videoId]);
-  return (
-    <Row gutter={[16, 16]}>
-      <Col lg={18} xs={24}>
-        <VideoContainer>
-          <CVideo
-            src={
-              videoDetail && `http://localhost:5000/${videoDetail?.filePath}`
-            }
-            controls
-          />
 
-          <List.Item>
-            <List.Item.Meta
-              avatar={<Avatar src={videoDetail?.writer.image} />}
-              title={videoDetail?.writer.name}
-              description={videoDetail?.description}
+  if (videoDetail) {
+    return (
+      <Row gutter={[16, 16]}>
+        <Col lg={18} xs={24}>
+          <VideoContainer>
+            <CVideo
+              src={
+                videoDetail && `http://localhost:5000/${videoDetail?.filePath}`
+              }
+              controls
             />
-          </List.Item>
-          {/* Comments */}
-        </VideoContainer>
-      </Col>
-      <Col lg={6} xs={24}>
-        <SideVideo />
-      </Col>
-    </Row>
-  );
+
+            <List.Item
+              actions={[<Subscribe userTo={videoDetail?.writer._id} />]}
+            >
+              <List.Item.Meta
+                avatar={<Avatar src={videoDetail?.writer.image} />}
+                title={videoDetail?.writer.name}
+                description={videoDetail?.description}
+              />
+            </List.Item>
+            {/* Comments */}
+          </VideoContainer>
+        </Col>
+        <Col lg={6} xs={24}>
+          <SideVideo />
+        </Col>
+      </Row>
+    );
+  } else {
+    return <div>...loading</div>;
+  }
 }
 
 export default VideoDetailPage;
