@@ -3,7 +3,7 @@ import styled from "@emotion/styled";
 export const SideVideoContainer = styled.div`
   display: flex;
   margin-bottom: 1rem;
-  padding: 0 2rem;
+  padding: 0 3rem;
 `;
 
 export const SideVideoThumbnailWrap = styled.div`
