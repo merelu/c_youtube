@@ -35,10 +35,10 @@ router.post("/subscribe", (req, res) => {
   });
 });
 
-router.delete("/unSubscribe", (req, res) => {
+router.delete("/unSubscribe/:userTo/:userFrom", (req, res) => {
   Subscriber.findOneAndDelete({
-    userTo: req.data.userTo,
-    userFrom: req.data.userFrom,
+    userTo: req.params.userTo,
+    userFrom: req.params.userFrom,
   }).exec((err, doc) => {
     if (err) return res.status(400).json({ success: false, err });
     res.status(200).json({ success: true, doc });
