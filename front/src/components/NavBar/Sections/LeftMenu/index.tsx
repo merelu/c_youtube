@@ -14,16 +14,9 @@ function LeftMenu({ mode }: ILeftMenu) {
       <Menu.Item key="mail">
         <Link to="/">Home</Link>
       </Menu.Item>
-      <SubMenu key="subMenu" title={<div>Blogs</div>}>
-        <Menu.ItemGroup title="Item 1">
-          <Menu.Item key="setting:1">Option 1</Menu.Item>
-          <Menu.Item key="setting:2">Option 2</Menu.Item>
-        </Menu.ItemGroup>
-        <Menu.ItemGroup title="Item 2">
-          <Menu.Item key="setting:3">Option 3</Menu.Item>
-          <Menu.Item key="setting:4">Option 4</Menu.Item>
-        </Menu.ItemGroup>
-      </SubMenu>
+      <Menu.Item key="subscription">
+        <Link to="/subscription">Subscription</Link>
+      </Menu.Item>
     </Menu>
   );
 }
