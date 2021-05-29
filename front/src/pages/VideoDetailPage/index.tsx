@@ -14,7 +14,6 @@ function VideoDetailPage() {
   useEffect(() => {
     axios.get(`/api/video/getVideoDetail/${videoId}`).then((response) => {
       if (response.data.success) {
-        console.log(response.data.videoDetail);
         setVideoDetail(response.data.videoDetail);
       } else {
         alert("비디오 정보를를 가져 오는 것을 실패했습니다.");
@@ -23,6 +22,10 @@ function VideoDetailPage() {
   }, [videoId]);
 
   if (videoDetail) {
+    const subscribeButton = videoDetail.writer._id !==
+      window.localStorage.getItem("userId") && (
+      <Subscribe userTo={videoDetail?.writer._id} />
+    );
     return (
       <Row gutter={[16, 16]}>
         <Col lg={18} xs={24}>
@@ -34,9 +37,7 @@ function VideoDetailPage() {
               controls
             />
 
-            <List.Item
-              actions={[<Subscribe userTo={videoDetail?.writer._id} />]}
-            >
+            <List.Item actions={[subscribeButton]}>
               <List.Item.Meta
                 avatar={<Avatar src={videoDetail?.writer.image} />}
                 title={videoDetail?.writer.name}
