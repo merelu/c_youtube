@@ -3,13 +3,15 @@ import { Row, Col, List, Avatar } from "antd";
 import { CVideo, VideoContainer } from "./styles";
 import axios from "axios";
 import { useParams } from "react-router";
-import { IVideo } from "@typings/db";
+import { IVideo, IComment } from "@typings/db";
 import SideVideo from "@components/SideVideo";
 import Subscribe from "@components/Subscribe";
+import Comments from "@components/Comments";
 
 function VideoDetailPage() {
   const { videoId } = useParams<{ videoId: string }>();
   const [videoDetail, setVideoDetail] = useState<IVideo>();
+  const [comments, setComments] = useState<IComment[]>([]);
 
   useEffect(() => {
     axios.get(`/api/video/getVideoDetail/${videoId}`).then((response) => {
@@ -17,6 +19,14 @@ function VideoDetailPage() {
         setVideoDetail(response.data.videoDetail);
       } else {
         alert("비디오 정보를를 가져 오는 것을 실패했습니다.");
+      }
+    });
+
+    axios.get(`/api/comment/getComments/${videoId}`).then((response) => {
+      if (response.data.success) {
+        setComments(response.data.comments);
+      } else {
+        alert("해당 비디오의 댓글을 불러오는데 실패했습니다.");
       }
     });
   }, [videoId]);
@@ -44,7 +54,8 @@ function VideoDetailPage() {
                 description={videoDetail?.description}
               />
             </List.Item>
-            {/* Comments */}
+
+            <Comments comments={comments} />
           </VideoContainer>
         </Col>
         <Col lg={6} xs={24}>
