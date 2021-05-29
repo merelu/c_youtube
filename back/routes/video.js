@@ -1,5 +1,6 @@
 const express = require("express");
 const { Video } = require("../models/Video");
+const { Subscriber } = require("../models/Subscriber");
 const multer = require("multer");
 const fs = require("fs");
 const ffmpeg = require("fluent-ffmpeg");
@@ -121,5 +122,26 @@ router.get("/getVideoDetail/:videoId", (req, res) => {
       if (err) return res.status(400).send(err);
       res.status(200).json({ success: true, videoDetail });
     });
+});
+
+router.get("/getSubscriptionVideos/:userFrom", (req, res) => {
+  Subscriber.find({ userFrom: req.params.userFrom }).exec(
+    (err, subscriberInfo) => {
+      if (err) return res.status(400).send(err);
+
+      let subscribedUser = [];
+
+      subscriberInfo.map((subscriber, index) => {
+        subscribedUser.push(subscriber.userTo);
+      });
+
+      Video.find({ writer: { $in: subscribedUser } })
+        .populate("writer", "isAuth isAdmin name email lastname role image")
+        .exec((err, videos) => {
+          if (err) return res.status(400).send(err);
+          res.status(200).json({ success: true, videos });
+        });
+    }
+  );
 });
 module.exports = router;
