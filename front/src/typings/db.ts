@@ -23,3 +23,13 @@ export interface IVideo {
   writer: IUser;
   _id: string;
 }
+
+export interface IComment {
+  _id: string;
+  writer: string;
+  videoId: string;
+  responseTo: string;
+  content: string;
+  createdAt: string;
+  updatedAt: string;
+}
