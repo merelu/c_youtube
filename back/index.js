@@ -5,7 +5,10 @@ const config = require("./config/key");
 const userRouter = require("./routes/user");
 const videoRouter = require("./routes/video");
 const subscribeRouter = require("./routes/subscribe");
+const commentRouter = require("./routes/comment");
+
 const app = express();
+
 mongoose
   .connect(config.mongoURI, {
     useNewUrlParser: true,
@@ -23,6 +26,7 @@ app.use(cookieParser());
 app.use("/api/users", userRouter);
 app.use("/api/video", videoRouter);
 app.use("/api/subscribe", subscribeRouter);
+app.use("/api/comment", commentRouter);
 app.use("/back/uploads", express.static("back/uploads"));
 
 if (process.env.NODE_ENV === "production") {
