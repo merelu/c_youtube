@@ -4,6 +4,7 @@ import {
   Action,
   combineReducers,
 } from "@reduxjs/toolkit";
+import { commentSlice } from "@_reducers/commentSlice";
 import { userSlice } from "@_reducers/userSlice";
 import { connectRouter, routerMiddleware } from "connected-react-router";
 import { createBrowserHistory } from "history";
@@ -13,6 +14,7 @@ export const history = createBrowserHistory();
 const reducer = combineReducers({
   router: connectRouter(history),
   user: userSlice.reducer,
+  comments: commentSlice.reducer,
 });
 
 export const store = configureStore({
