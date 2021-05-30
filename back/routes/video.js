@@ -110,7 +110,7 @@ router.get("/getVideos", (req, res) => {
   Video.find()
     .populate("writer", "isAuth isAdmin name email lastname role image")
     .exec((err, videos) => {
-      if (err) return res.status(400).send(err);
+      if (err) return res.status(400).json({ success: false, err });
       res.status(200).json({ success: true, videos });
     });
 });
@@ -119,7 +119,7 @@ router.get("/getVideoDetail/:videoId", (req, res) => {
   Video.findOne({ _id: req.params.videoId })
     .populate("writer", "isAuth isAdmin name email lastname role image")
     .exec((err, videoDetail) => {
-      if (err) return res.status(400).send(err);
+      if (err) return res.status(400).json({ success: false, err });
       res.status(200).json({ success: true, videoDetail });
     });
 });
@@ -127,7 +127,7 @@ router.get("/getVideoDetail/:videoId", (req, res) => {
 router.get("/getSubscriptionVideos/:userFrom", (req, res) => {
   Subscriber.find({ userFrom: req.params.userFrom }).exec(
     (err, subscriberInfo) => {
-      if (err) return res.status(400).send(err);
+      if (err) return res.status(400).json({ success: false, err });
 
       let subscribedUser = [];
 
@@ -138,7 +138,7 @@ router.get("/getSubscriptionVideos/:userFrom", (req, res) => {
       Video.find({ writer: { $in: subscribedUser } })
         .populate("writer", "isAuth isAdmin name email lastname role image")
         .exec((err, videos) => {
-          if (err) return res.status(400).send(err);
+          if (err) return res.status(400).json({ success: false, err });
           res.status(200).json({ success: true, videos });
         });
     }

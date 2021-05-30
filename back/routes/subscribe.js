@@ -5,7 +5,7 @@ const { Subscriber } = require("../models/Subscriber");
 
 router.get("/subscribeNumber/:userTo", (req, res) => {
   Subscriber.find({ userTo: req.params.userTo }).exec((err, subscribe) => {
-    if (err) return res.status(400).send(err);
+    if (err) return res.status(400).json({ success: false, err });
     return res
       .status(200)
       .json({ success: true, subscribeNumber: subscribe.length });
@@ -17,7 +17,7 @@ router.get("/subscribed/:userTo/:userFrom", (req, res) => {
     userTo: req.params.userTo,
     userFrom: req.params.userFrom,
   }).exec((err, subscribe) => {
-    if (err) return res.status(400).send(err);
+    if (err) return res.status(400).json({ success: false, err });
     let result = false;
     if (subscribe.length !== 0) {
       result = true;
