@@ -26,7 +26,7 @@ export interface IVideo {
 
 export interface IComment {
   _id: string;
-  writer: string;
+  writer: IUser;
   videoId: string;
   responseTo: string;
   content: string;
