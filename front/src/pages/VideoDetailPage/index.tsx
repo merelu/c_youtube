@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Row, Col, List, Avatar } from "antd";
 import { CVideo, VideoContainer } from "./styles";
 import axios from "axios";
@@ -6,12 +6,15 @@ import { useParams } from "react-router";
 import { IVideo, IComment } from "@typings/db";
 import SideVideo from "@components/SideVideo";
 import Subscribe from "@components/Subscribe";
-import Comments from "@components/Comments";
+import CommentList from "@components/CommentList";
+import { useAppDispatch, useAppSelector } from "@store/hooks";
+import { commentSlice } from "@_reducers/commentSlice";
 
 function VideoDetailPage() {
+  const dispatch = useAppDispatch();
   const { videoId } = useParams<{ videoId: string }>();
   const [videoDetail, setVideoDetail] = useState<IVideo>();
-  const [comments, setComments] = useState<IComment[]>([]);
+  const comments = useAppSelector((state) => state.comments);
 
   useEffect(() => {
     axios.get(`/api/video/getVideoDetail/${videoId}`).then((response) => {
@@ -24,12 +27,12 @@ function VideoDetailPage() {
 
     axios.get(`/api/comment/getComments/${videoId}`).then((response) => {
       if (response.data.success) {
-        setComments(response.data.comments);
+        dispatch(commentSlice.actions.addComment(response.data.comments));
       } else {
         alert("해당 비디오의 댓글을 불러오는데 실패했습니다.");
       }
     });
-  }, [videoId]);
+  }, [dispatch, videoId]);
 
   if (videoDetail) {
     const subscribeButton = videoDetail.writer._id !==
@@ -55,7 +58,7 @@ function VideoDetailPage() {
               />
             </List.Item>
 
-            <Comments comments={comments} />
+            <CommentList comments={comments} />
           </VideoContainer>
         </Col>
         <Col lg={6} xs={24}>
