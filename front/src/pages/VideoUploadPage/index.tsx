@@ -1,6 +1,6 @@
-import React, { useCallback, useState } from "react";
+import React from "react";
 import { Button, Form, Input, message, Select, Typography } from "antd";
-import Dropzone, { useDropzone } from "react-dropzone";
+import Dropzone from "react-dropzone";
 import { DropzoneContainer, DropzoneInner } from "./styles";
 import { PlusOutlined } from "@ant-design/icons";
 import { Formik } from "formik";
@@ -78,12 +78,10 @@ function VideoUploadPage() {
           values,
           touched,
           errors,
-          dirty,
           isSubmitting,
           handleChange,
           handleBlur,
           handleSubmit,
-          handleReset,
           setFieldValue,
         } = props;
 
@@ -226,7 +224,6 @@ function VideoUploadPage() {
                   size="large"
                   htmlType="submit"
                   disabled={isSubmitting}
-                  onSubmit={handleSubmit}
                 >
                   Submit
                 </Button>

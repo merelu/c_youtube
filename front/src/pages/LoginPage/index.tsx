@@ -149,7 +149,6 @@ function LoginPage() {
                     className="login-form-button"
                     style={{ minWidth: "100%" }}
                     disabled={isSubmitting}
-                    onSubmit={handleSubmit}
                   >
                     Log in
                   </Button>

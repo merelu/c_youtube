@@ -3,8 +3,6 @@ import { Menu } from "antd";
 import { MenuMode } from "antd/lib/menu";
 import { Link } from "react-router-dom";
 
-const { SubMenu } = Menu;
-
 interface ILeftMenu {
   mode: MenuMode;
 }

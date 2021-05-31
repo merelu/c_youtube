@@ -178,7 +178,6 @@ function RegisterPage() {
               <Form.Item {...tailFormItemLayout}>
                 <Button
                   htmlType="submit"
-                  onSubmit={handleSubmit}
                   type="primary"
                   disabled={isSubmitting}
                 >
