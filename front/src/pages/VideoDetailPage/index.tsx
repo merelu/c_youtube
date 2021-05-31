@@ -26,7 +26,7 @@ function VideoDetailPage() {
 
     axios.get(`/api/comment/getComments/${videoId}`).then((response) => {
       if (response.data.success) {
-        dispatch(commentSlice.actions.addComment(response.data.comments));
+        dispatch(commentSlice.actions.fetchComment(response.data.comments));
       } else {
         alert("해당 비디오의 댓글을 불러오는데 실패했습니다.");
       }
