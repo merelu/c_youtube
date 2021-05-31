@@ -1,14 +1,11 @@
 import React from "react";
-import { IComment } from "@typings/db";
 import SingleComment from "@components/SingleComment";
 import ReplyForm from "@components/ReplyForm";
 import ReplyComment from "@components/ReplyComment";
+import { useAppSelector } from "@store/hooks";
 
-interface IComments {
-  comments: IComment[];
-}
-
-function CommentList({ comments }: IComments) {
+function CommentList() {
+  const comments = useAppSelector((state) => state.comments);
   return (
     <div>
       <br />
@@ -22,10 +19,7 @@ function CommentList({ comments }: IComments) {
             !comment.responseTo && (
               <div key={comment._id}>
                 <SingleComment comment={comment} />
-                <ReplyComment
-                  comments={comments}
-                  parentCommentId={comment._id}
-                />
+                <ReplyComment parentCommentId={comment._id} />
               </div>
             )
         )}

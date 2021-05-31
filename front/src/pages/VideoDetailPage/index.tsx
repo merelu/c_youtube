@@ -1,20 +1,19 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Row, Col, List, Avatar } from "antd";
 import { CVideo, VideoContainer } from "./styles";
 import axios from "axios";
 import { useParams } from "react-router";
-import { IVideo, IComment } from "@typings/db";
+import { IVideo } from "@typings/db";
 import SideVideo from "@components/SideVideo";
 import Subscribe from "@components/Subscribe";
 import CommentList from "@components/CommentList";
-import { useAppDispatch, useAppSelector } from "@store/hooks";
+import { useAppDispatch } from "@store/hooks";
 import { commentSlice } from "@_reducers/commentSlice";
 
 function VideoDetailPage() {
   const dispatch = useAppDispatch();
   const { videoId } = useParams<{ videoId: string }>();
   const [videoDetail, setVideoDetail] = useState<IVideo>();
-  const comments = useAppSelector((state) => state.comments);
 
   useEffect(() => {
     axios.get(`/api/video/getVideoDetail/${videoId}`).then((response) => {
@@ -58,7 +57,7 @@ function VideoDetailPage() {
               />
             </List.Item>
 
-            <CommentList comments={comments} />
+            <CommentList />
           </VideoContainer>
         </Col>
         <Col lg={6} xs={24}>

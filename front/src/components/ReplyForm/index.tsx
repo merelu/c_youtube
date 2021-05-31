@@ -43,6 +43,7 @@ function ReplyForm({ second, commentId, closeForm }: IReplyForm) {
             alert("댓글작성하는데 실패했습니다.");
           }
         });
+        setSubmitting(false);
       }}
     >
       {(props) => {
@@ -76,7 +77,11 @@ function ReplyForm({ second, commentId, closeForm }: IReplyForm) {
                 onBlur={handleBlur}
               />
 
-              <Button style={{ height: "100%" }} htmlType="submit">
+              <Button
+                style={{ height: "100%" }}
+                htmlType="submit"
+                disabled={isSubmitting}
+              >
                 Submit
               </Button>
             </div>
