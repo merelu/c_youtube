@@ -1,13 +1,14 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Form, Input, message, Select, Typography } from "antd";
 import Dropzone from "react-dropzone";
 import { DropzoneContainer, DropzoneInner } from "./styles";
 import { PlusOutlined } from "@ant-design/icons";
-import { Formik } from "formik";
+import { Formik, FormikValues, useFormikContext } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
 import { useAppDispatch, useAppSelector } from "@store/hooks";
 import { push } from "connected-react-router";
+import { IVideo } from "@typings/db";
 
 const { Title } = Typography;
 const { TextArea } = Input;
@@ -34,21 +35,50 @@ const validationSchema = Yup.object().shape({
   thumbnail: Yup.string().required("Thumbnail is required"),
 });
 
+interface IFormikValues {
+  title: string;
+  description: string;
+  privacy: string;
+  category: string;
+  filePath: string;
+  thumbnail: string;
+  duration: string;
+}
+
+const SubPage = () => {
+  const { values } = useFormikContext<IFormikValues>();
+  useEffect(() => {
+    if (values.filePath !== "" && values.thumbnail !== "") {
+      return () => {
+        let body = { filePath: values.filePath, thumbnail: values.thumbnail };
+
+        axios.post(`/api/video/uploadVideoDelete`, body).then((response) => {
+          if (!response.data.success) {
+            alert("비디오 삭제 실패");
+          }
+        });
+      };
+    }
+  }, [values.filePath, values.thumbnail]);
+  return null;
+};
 function VideoUploadPage() {
   const dispatch = useAppDispatch();
   const user = useAppSelector((state) => state.user);
+  const [loading, setLoading] = useState(false);
 
+  const initialvalues: IFormikValues = {
+    title: "",
+    description: "",
+    privacy: privacyOption[0].label,
+    category: categoryOption[0].label,
+    filePath: "",
+    thumbnail: "",
+    duration: "",
+  };
   return (
     <Formik
-      initialValues={{
-        title: "",
-        description: "",
-        privacy: privacyOption[0].label,
-        category: categoryOption[0].label,
-        filePath: "",
-        thumbnail: "",
-        duration: "",
-      }}
+      initialValues={initialvalues}
       validationSchema={validationSchema}
       onSubmit={(values, { setSubmitting }) => {
         let body = {
@@ -61,11 +91,9 @@ function VideoUploadPage() {
           thumbnail: values.thumbnail,
           duration: values.duration,
         };
-        console.log(body);
         axios.post("/api/video/uploadVideo", body).then((response) => {
           if (response.data.success) {
-            message.success("성공적으로 업로드를 했습니다.");
-            dispatch(push("/"));
+            dispatch(push("/myVideo"));
           } else {
             alert("비디오 업로드를 실패했습니다.");
           }
@@ -85,18 +113,33 @@ function VideoUploadPage() {
           setFieldValue,
         } = props;
 
+        const renderThumbnail = () => {
+          if (values.thumbnail !== "" && !loading) {
+            return (
+              <img
+                src={`http://localhost:5000/${values.thumbnail}`}
+                alt={values.thumbnail}
+              />
+            );
+          } else if (loading) {
+            return <div>...loading</div>;
+          } else {
+            return <div></div>;
+          }
+        };
+
         const onDrop = (files: any) => {
           let formData = new FormData();
           const config = {
             headers: { "content-type": "multipart/form-data" },
           };
+          setLoading(true);
           formData.append("file", files[0]);
           axios
             .post("/api/video/uploadfiles", formData, config)
             .then((response) => {
               if (response.data.success) {
                 setFieldValue("filePath", response.data.url, true);
-                console.log(values.filePath);
                 let body = {
                   url: response.data.url,
                   fileName: response.data.fileName,
@@ -105,6 +148,7 @@ function VideoUploadPage() {
                   if (response.data.success) {
                     setFieldValue("thumbnail", response.data.url[0], true);
                     setFieldValue("duration", response.data.fileDuration, true);
+                    setLoading(false);
                   } else {
                     alert("썸네일 생성을 실패했습니다.");
                   }
@@ -116,6 +160,7 @@ function VideoUploadPage() {
         };
         return (
           <div className="formPage">
+            <SubPage />
             <Title level={2}>Upload Video</Title>
             <br />
 
@@ -138,13 +183,16 @@ function VideoUploadPage() {
                     )}
                   </Dropzone>
                 </Form.Item>
-                <div style={{ width: "320px" }}>
-                  {values.thumbnail !== "" && (
-                    <img
-                      src={`http://localhost:5000/${values.thumbnail}`}
-                      alt={values.thumbnail}
-                    />
-                  )}
+                <div
+                  style={{
+                    display: "flex",
+                    width: "320px",
+                    height: "240px",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  {renderThumbnail()}
                 </div>
               </DropzoneContainer>
               {errors.filePath && touched.filePath && (
