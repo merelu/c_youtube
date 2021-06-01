@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Button, Form, Input, message, Select, Typography } from "antd";
+import { Button, Form, Input, Select, Typography } from "antd";
 import Dropzone from "react-dropzone";
 import { DropzoneContainer, DropzoneInner } from "./styles";
 import { PlusOutlined } from "@ant-design/icons";
-import { Formik, FormikValues, useFormikContext } from "formik";
+import { Formik, useFormikContext } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
 import { useAppDispatch, useAppSelector } from "@store/hooks";
 import { push } from "connected-react-router";
-import { IVideo } from "@typings/db";
 
 const { Title } = Typography;
 const { TextArea } = Input;
@@ -117,6 +116,7 @@ function VideoUploadPage() {
           if (values.thumbnail !== "" && !loading) {
             return (
               <img
+                style={{ width: "200px", height: "150px" }}
                 src={`http://localhost:5000/${values.thumbnail}`}
                 alt={values.thumbnail}
               />
@@ -186,8 +186,8 @@ function VideoUploadPage() {
                 <div
                   style={{
                     display: "flex",
-                    width: "320px",
-                    height: "240px",
+                    width: "200px",
+                    height: "150px",
                     justifyContent: "center",
                     alignItems: "center",
                   }}

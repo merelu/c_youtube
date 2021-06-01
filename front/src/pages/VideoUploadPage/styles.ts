@@ -11,8 +11,8 @@ export const DropzoneContainer = styled.div`
 `;
 
 export const DropzoneInner = styled.div`
-  width: 300px;
-  height: 240px;
+  width: 200px;
+  height: 150px;
   border: 1px solid lightgray;
   display: flex;
   align-items: center;
