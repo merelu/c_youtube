@@ -31,7 +31,6 @@ function MyVideoPage() {
       axios
         .get(`/api/video/getMyVideos/${user.userData._id}`)
         .then((response) => {
-          console.log(response.data);
           if (response.data.success) {
             setMyVideos(response.data.videos);
           } else {
