@@ -8,6 +8,7 @@ import NavBar from "@components/NavBar";
 import VideoUploadPage from "@pages/VideoUploadPage";
 import VideoDetailPage from "@pages/VideoDetailPage";
 import SubscriptionPage from "@pages/SubscriptionPage";
+import MyVideoPage from "@pages/MyVideoPage";
 
 function App() {
   return (
@@ -38,6 +39,7 @@ function App() {
             path="/subscription"
             component={Auth(SubscriptionPage, true)}
           />
+          <Route exact path="/myVideo" component={Auth(MyVideoPage, true)} />
         </Switch>
       </div>
     </Suspense>
