@@ -7,11 +7,13 @@ import { IVideo } from "@typings/db";
 import SideVideo from "@components/SideVideo";
 import Subscribe from "@components/Subscribe";
 import CommentList from "@components/CommentList";
-import { useAppDispatch } from "@store/hooks";
+import { useAppDispatch, useAppSelector } from "@store/hooks";
 import { commentSlice } from "@_reducers/commentSlice";
+import LikeDisLikes from "@components/LikeDisLikes";
 
 function VideoDetailPage() {
   const dispatch = useAppDispatch();
+  const user = useAppSelector((state) => state.user);
   const { videoId } = useParams<{ videoId: string }>();
   const [videoDetail, setVideoDetail] = useState<IVideo>();
 
@@ -34,10 +36,14 @@ function VideoDetailPage() {
   }, [dispatch, videoId]);
 
   if (videoDetail) {
-    const subscribeButton = videoDetail.writer._id !==
-      window.localStorage.getItem("userId") && (
-      <Subscribe userTo={videoDetail?.writer._id} />
-    );
+    const actions =
+      videoDetail.writer._id !== user.userData._id
+        ? [
+            <LikeDisLikes type="video" />,
+            <Subscribe userTo={videoDetail?.writer._id} />,
+          ]
+        : [];
+
     return (
       <Row gutter={[16, 16]}>
         <Col lg={18} xs={24}>
@@ -49,14 +55,13 @@ function VideoDetailPage() {
               controls
             />
 
-            <List.Item actions={[subscribeButton]}>
+            <List.Item actions={actions}>
               <List.Item.Meta
                 avatar={<Avatar src={videoDetail?.writer.image} />}
                 title={videoDetail?.writer.name}
                 description={videoDetail?.description}
               />
             </List.Item>
-
             <CommentList />
           </VideoContainer>
         </Col>
