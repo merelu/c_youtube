@@ -115,6 +115,17 @@ router.get("/getVideos", (req, res) => {
     });
 });
 
+router.get("/getMyVideos/:userId", (req, res) => {
+  //비디오를 DB에서 가져와서 클라이언트에 보낸다.
+  //populate을 하지 않으면 writer의 id만 가져옴
+  Video.find({ writer: req.params.userId })
+    .populate("writer", "isAuth isAdmin name email lastname role image")
+    .exec((err, videos) => {
+      if (err) return res.status(400).json({ success: false, err });
+      res.status(200).json({ success: true, videos });
+    });
+});
+
 router.get("/getVideoDetail/:videoId", (req, res) => {
   Video.findOne({ _id: req.params.videoId })
     .populate("writer", "isAuth isAdmin name email lastname role image")
@@ -144,4 +155,49 @@ router.get("/getSubscriptionVideos/:userFrom", (req, res) => {
     }
   );
 });
+
+router.delete("/deleteVideo/:videoId", (req, res) => {
+  Video.findOneAndDelete({ _id: req.params.videoId }).exec((err, video) => {
+    if (err) return res.status(400).json({ success: false, err });
+    fs.unlinkSync(`${video.filePath}`, (err) => {
+      if (err) return res.status(400).json({ success: false });
+    });
+    let thumbnailPath = video.thumbnail.substring(
+      0,
+      video.thumbnail.length - 5
+    );
+    for (let i = 1; i <= 3; i++) {
+      fs.unlinkSync(`${thumbnailPath}${i}.png`, (err) => {
+        if (err) return res.status(400).json({ success: false });
+      });
+    }
+    res.status(200).json({ success: true });
+  });
+});
+
+router.post("/uploadVideoDelete", (req, res) => {
+  Video.find({
+    filePath: req.body.filePath,
+    thumbnail: req.body.thumbnail,
+  }).exec((err, video) => {
+    console.log(video);
+    if (err) return res.status(400).json({ success: false });
+    if (video.length === 0) {
+      fs.unlinkSync(`${req.body.filePath}`, (err) => {
+        if (err) return res.status(400).json({ success: false });
+      });
+      let thumbnailPath = req.body.thumbnail.substring(
+        0,
+        req.body.thumbnail.length - 5
+      );
+      for (let i = 1; i <= 3; i++) {
+        fs.unlinkSync(`${thumbnailPath}${i}.png`, (err) => {
+          if (err) return res.status(400).json({ success: false });
+        });
+      }
+    }
+    res.status(200).json({ success: true });
+  });
+});
+
 module.exports = router;
