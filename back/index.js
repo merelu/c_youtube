@@ -6,6 +6,7 @@ const userRouter = require("./routes/user");
 const videoRouter = require("./routes/video");
 const subscribeRouter = require("./routes/subscribe");
 const commentRouter = require("./routes/comment");
+const likeRouter = require("./routes/like");
 
 const app = express();
 
@@ -27,6 +28,7 @@ app.use("/api/users", userRouter);
 app.use("/api/video", videoRouter);
 app.use("/api/subscribe", subscribeRouter);
 app.use("/api/comment", commentRouter);
+app.use("/api/like", likeRouter);
 app.use("/back/uploads", express.static("back/uploads"));
 
 if (process.env.NODE_ENV === "production") {
